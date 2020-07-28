@@ -43,7 +43,8 @@ init
 
 startup {
     settings.Add("is_IL", false, "IL Splitter");
-	settings.Add("alwaysReset", false, "Reset on main menu", "is_IL");
+    settings.Add("alwaysReset", false, "Always reset on main menu");
+    settings.Add("isMod", false, "Running a mod (enables auto reset on level 14)");
 }
 
 start
@@ -57,7 +58,7 @@ start
 
 reset
 {
-	if ( ( old.level == 1 && current.level == 0 ) || ( current.level == 0 && settings["alwaysReset"] )  ) return true;
+	if ( ( old.level == 1 && current.level == 0 ) || ( current.level == 0 && settings["alwaysReset"] && ( settings["isMod"] && old.level != 14 ) ) ) return true;
 }
 
 isLoading
@@ -69,7 +70,7 @@ isLoading
 split
 {
 	if ( current.levelSafetyCheck != 0 ) return false;
-	int inc=old.tLevel+1; 								// Stupid way to fix stupid issue with 0.73 where exiting the esc menu would split
+	int inc=old.tLevel+1; 									// Stupid way to fix stupid issue with 0.73 where exiting the esc menu would split
 	bool next = inc == current.tLevel && current.tLevel != 1 && current.tLevel != 0;	// 2nd and 3rd conditional also fixes 0.73 issue where it'd split twice upon running Secret Base only once after starting the game
 	if ( current.tLevel == 14 && old.level == 14 && current.level == 0 ) return true;	// For splitting on returning to main menu after final level
 	return next;
